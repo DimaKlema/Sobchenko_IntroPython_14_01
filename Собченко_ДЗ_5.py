@@ -33,7 +33,7 @@ while index_1<len(my_list_1):
     my_result.append(my_list_1[index_1])
     index_1+=2
 while index_2<len(my_list_2):
-    my_result.append(my_list_2[юindex_2])
+    my_result.append(my_list_2[index_2])
     index_2+=2
 print(my_result)
 ##########################################
