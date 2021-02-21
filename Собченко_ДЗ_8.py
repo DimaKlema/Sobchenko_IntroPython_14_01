@@ -1,20 +1,22 @@
 import random as rnd
 import string
 
-# 1 в генерации строки использую только нижний регистр. В условии об етом не сказано,
-#    но комбинировать верхний регистр с нижним в имени почтового ящика врядли нужно
+# Переделал согласно вашим замечаниям:
+#   В первом задании собрал возврат в функции с помощью f-строки
+#   В третьем задании разбил на отдельные функции
+
 names = ['armstrong', 'oldrin', 'mitchel', 'scott']
 domains = ['net', 'com', 'ua', 'ru']
 
 
 def create_email(domains, names):
     rand_str = ''.join(rnd.choice(string.ascii_lowercase) for i in range(rnd.randint(5, 7)))
-    return rnd.choice(names) + '.' + str(rnd.randint(100, 999)) + '@' + str(rand_str) + '.' + rnd.choice(domains)
+    # return rnd.choice(names) + '.' + str(rnd.randint(100, 999)) + '@' + str(rand_str) + '.' + rnd.choice(domains)
+    return f"{rnd.choice(names)}.{str(rnd.randint(100, 999))}@{str(rand_str)}.{rnd.choice(domains)}"
 
 
 e_mail = create_email(domains, names)
 print(e_mail)
-
 
 ###########################################
 
@@ -26,7 +28,8 @@ def rand_len_str(min_limit, max_limit):
 my_str = rand_len_str(40, 70)
 print(my_str)
 
-############################################
+##############################################################
+
 
 # 3
 # Чтоб придать реалистичности тексту, я провёл такое иследование:
@@ -40,46 +43,68 @@ print(my_str)
 #      было много прямой речи =)
 #  Я выдержал эти пропорции и поэтому можно сказать что функция sentence_generator преобразует строку
 #  в текст in Толстой style  =)
-def sentence_generator(my_str):
-   word_list=[]
-   punct_symb=[', ',', ',': ',' - ',' ',' ',' ',' ',' ',' ',' ',' ',' \\n ']
-   letters=''
-   numbers=''
-   for symbol in my_str:  # сортирую строку на буквы и цифры
-       if symbol.isnumeric():
-         numbers+=symbol
-       else:
-         letters+=symbol
 
-   i=0
-   words=''
-   while i<=len(letters): # разбиваю строку букв на слова случайной длины от 1 до 10
-      a = rnd.randint(1, 10)
-      word=(letters[i:i+a]+' ')
-      words+=word
-      i+=a
+def sort_string(my_str): # сортирует строку на буквы и цифры
+    letters = ''
+    numbers = ''
+    for symbol in my_str:
+        if symbol.isnumeric():
+            numbers += symbol
+        else:
+            letters += symbol
+    return letters,numbers
 
-   words_1=words.rstrip().capitalize()# удаляю последний пробел и делаю заглавной первую букву
-   word_list=words_1.split(' ')# перехожу к списку для удобства
-   word_list.insert(rnd.randint(1,len(word_list)),numbers) # возвращаю на случайное место отобранные вначале цифры
+##########################
 
-   i=1
-   while i<=len(word_list[1:])//4:# делаю заглавные буквы в словах так чтоб их было не больше чем одно слово из четырёх
-       a=rnd.randint(i,i+4)
-       word_list[a]=word_list[a].title()
-       i+=1
+def break_string(letters,numbers):  # разбиваet строку букв на слова случайной длины от 1 до 10
+    i = 0
+    words = ''
+    while i <= len(letters):
+        a = rnd.randint(1, 10)
+        word = (letters[i:i + a] + ' ')
+        words += word
+        i += a
 
-   sentence = []
-   for word in word_list: # собираю до кучи слова, пробелы и знаки препинания
-       sentence.append(word)
-       sentence.append(rnd.choice(punct_symb))
+    words_new = words.rstrip().capitalize()  # удаляю последний пробел и делаю заглавной первую букву
+    word_list = words_new.split(' ')  # перехожу к списку для удобства
+    word_list.insert(rnd.randint(1, len(word_list)), numbers)  # возвращаю на случайное место отобранные вначале цифры
+    return word_list
 
-   end=['!', '?', '!!!', '?!', '.', '...']
-   if sentence[-1] in punct_symb: # случайно выбираю конечный знак
-       del sentence[-1]
-       sentence.append(rnd.choice(end))
-   else:
-       sentence.append(rnd.choice(end))
+##########################
+
+
+def capital_letter(word_list):   # делаet заглавные буквы в словах так чтоб их было не больше чем одно слово из четырёх
+    i = 1
+    while i <= len(
+            word_list[1:]) // 4:
+        a = rnd.randint(i, i + 4)
+        word_list[a] = word_list[a].title()
+        i += 1
+    return word_list
+
+##########################
+
+def words_marks_collector(word_list):   # собираet до кучи слова, пробелы и знаки препинания
+    end = ['!', '?', '!!!', '?!', '.', '...']
+    punct_symb = [', ', ', ', ': ', ' - ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' \\n ']
+    sentence = []
+
+    for word in word_list:
+        sentence.append(word)
+        sentence.append(rnd.choice(punct_symb))
+
+    if sentence[-1] in punct_symb:  # случайно выбираю конечный знак
+        del sentence[-1]
+        sentence.append(rnd.choice(end))
+    else:
+        sentence.append(rnd.choice(end))
+    return sentence
+
+##########################
+
+def sentence_generator(my_str): # а теперь всё вместе
+   letters,numbers = sort_string(my_str)
+   sentence = words_marks_collector(capital_letter(break_string(letters,numbers)))
    return ''.join(sentence)
 
 print(sentence_generator(my_str))
