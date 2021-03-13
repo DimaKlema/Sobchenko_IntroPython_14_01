@@ -48,3 +48,4 @@
 48	Robinson	English	35,117
 49	Reyes	Spanish	35,092
 50	Vasquez	Spanish	34,045
+Сатья Наделла     12  1200
